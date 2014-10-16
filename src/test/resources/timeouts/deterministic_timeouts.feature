@@ -5,12 +5,12 @@ Feature:
   Background:
     Given I can control the network between the application and its dependency
 
-  Scenario: Keep alive with Oogway when network between UMV and Oogway is slow
+  Scenario: Dropping all traffic
     Given the network between my application and its dependency is dropping all traffic
     When I make a request to my application
     Then my application times out
 
-  Scenario: Create token times out when network between UMV and Oogway is slow
+  Scenario: Slowing down individual commits
     Given the network between my application and its dependency is slow
     When I make a request to my application
     Then my application times out
