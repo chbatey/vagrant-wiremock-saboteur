@@ -10,8 +10,8 @@ Feature:
     When I make a request to my application
     Then my application times out
 
-  Scenario: Slowing down individual commits
-    Given the network between my application and its dependency is slow
-    When I make a request to my application
-    Then my application times out
+#  Scenario: Slowing down individual commits
+#    Given the network between my application and its dependency is slow
+#    When I make a request to my application
+#    Then my application times out
 
