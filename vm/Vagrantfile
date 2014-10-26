@@ -13,10 +13,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             host.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v0.1.0/centos64-x86_64-20131030.box"
 
             host.vm.network :private_network, ip: "192.168.2.1"
-            host.vm.network :forwarded_port, guest: 22, host: 2221
 
             host.vm.provider :virtualbox do |vb|
-                vb.customize ["modifyvm", :id, "--memory", "384"]
+                vb.customize ["modifyvm", :id, "--memory", "1024"]
             end
 
             host.vm.provision "shell", path: "provision.sh"
