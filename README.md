@@ -19,7 +19,7 @@ The VM is assigned IP 192.168.2.2, if thie conflicts with anything on your netwo
 
 To see the URLs that the wiremock is mocking go to:
 
-[Wiremock mappings](http://192.168.2.2/__admin/)
+[Wiremock mappings](http://192.168.2.2:8080/__admin/)
 
 You can see we have one endpoint on /name - [name](http://192.168.2.2:8080/name)
 
