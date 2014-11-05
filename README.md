@@ -23,4 +23,7 @@ To see the URLs that the wiremock is mocking go to:
 
 You can see we have one endpoint on /name - [name](http://192.168.2.2:8080/name)
 
+TODO:
+Document the APIs for delaying traffic etc. The functional tests will use the Java library called crashlab.
+
 
