@@ -5,13 +5,15 @@ cp /vagrant/*.jar /home/vagrant/wiremock.jar
 mkdir -p /home/vagrant/mappings
 cp -r /vagrant/mappings/* /home/vagrant/mappings
 
+cp /vagrant/*.sh /home/vagrant
+
 chown vagrant:vagrant /home/vagrant/wiremock.jar
 
 nohup java -jar wiremock.jar --port=8080 --verbose &
 
 # Set up and run Saboteur
 echo "installing saboteur ..."
-rpm -ivh https://github.com/tomakehurst/saboteur/releases/download/v0.6/saboteur-0.6-1.noarch.rpm
+rpm -ivh https://github.com/tomakehurst/saboteur/releases/download/v0.7/saboteur-0.7-1.noarch.rpm
 
 echo "starting saboteur ..."
 service saboteur-agent start

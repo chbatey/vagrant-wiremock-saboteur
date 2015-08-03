@@ -2,16 +2,20 @@ package info.batey.examples.network;
 
 import com.codahale.metrics.annotation.Timed;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/say-hello")
 @Produces(MediaType.APPLICATION_JSON)
 public class ExampleResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleResource.class);
 
     private String dependencyHost;
 
@@ -21,18 +25,20 @@ public class ExampleResource {
 
     @GET
     @Timed
-    public String sayHello() throws Exception {
+    public Response sayHello() throws Exception {
         try {
-            Response response = Request.Get(dependencyHost)
-                    .connectTimeout(100)
-                    .socketTimeout(100)
-                    .execute();
+            String name = Request.Get(dependencyHost)
+                    .connectTimeout(500)
+                    .socketTimeout(500)
+                    .execute()
+                    .returnContent()
+                    .asString();
 
-            String name = response.returnContent().asString();
+            return Response.ok(String.format("hello %s\n\n", name)).build();
 
-            return String.format("hello %s", name);
         } catch (Exception e) {
-            return "Exception: " + e.getMessage();
+            LOGGER.info("Darn blast", e);
+            return Response.serverError().build();
         }
     }
 }
