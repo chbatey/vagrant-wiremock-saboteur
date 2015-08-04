@@ -1,7 +1,8 @@
 yum install -y java-1.7.0-openjdk.x86_64 lsof wget nc
 
 # Set up and run WireMock
-cp /vagrant/*.jar /home/vagrant/wiremock.jar
+cp /vagrant/wiremock*.jar /home/vagrant/wiremock.jar
+cp /vagrant/scassandra*.jar /home/vagrant/scassandra.jar
 mkdir -p /home/vagrant/mappings
 cp -r /vagrant/mappings/* /home/vagrant/mappings
 
