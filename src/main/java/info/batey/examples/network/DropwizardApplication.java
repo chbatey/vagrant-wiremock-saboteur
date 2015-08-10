@@ -23,6 +23,6 @@ public class DropwizardApplication extends Application<AppConfig> {
     public void run(AppConfig configuration,
                     Environment environment) {
         environment.jersey()
-                   .register(new ExampleResource(configuration.getHost()));
+                   .register(new ExampleResource(configuration));
     }
 }

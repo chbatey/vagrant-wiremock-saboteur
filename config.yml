@@ -1,1 +1,3 @@
-host: "http://192.168.2.2:8080/name"
+host: "192.168.2.2"
+httpPort: 8080
+cassandraPort: 8042

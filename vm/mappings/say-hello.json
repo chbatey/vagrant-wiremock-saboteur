@@ -5,7 +5,7 @@
     },
     "response": {
         "status": 200,
-        "body": "Chris!!!",
+        "body": "Chris",
         "headers": {
             "Content-Type": "text/plain"
         }
