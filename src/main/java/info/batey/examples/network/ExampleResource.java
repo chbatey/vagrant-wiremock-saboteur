@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.SocketTimeoutException;
 import java.util.Optional;
 
 @Path("/say-hello")
@@ -57,16 +58,20 @@ public class ExampleResource {
 
             return Response.ok(String.format("hello %s %s\n\n", name, surname)).build();
         }
+        catch (SocketTimeoutException ste) {
+            LOGGER.warn("Blame the other team, their server is slow");
+            return Response.serverError().build();
+        }
         catch (NoHostAvailableException nhe) {
-            LOGGER.info("Darn blast, Cassandra be slow or down");
+            LOGGER.warn("Cassandra be slow or down, bring in OPS!!! ");
             return Response.serverError().build();
         }
         catch (ReadTimeoutException readTimeoutException) {
-            LOGGER.info("Cassandra read timeout: I should probably consider retrying???");
+            LOGGER.warn("Cassandra read timeout: I should probably consider retrying???");
             return Response.serverError().build();
         }
         catch (Exception e) {
-            LOGGER.info("Darn blast", e);
+            LOGGER.error("Darn blast I have NO idea what to do :-/", e);
             return Response.serverError().build();
         }
     }
