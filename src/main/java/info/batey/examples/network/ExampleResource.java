@@ -35,7 +35,6 @@ public class ExampleResource {
     public Response sayHello() throws Exception {
         try {
             String name = Request.Get(dependencyHost)
-                    .connectTimeout(500)
                     .socketTimeout(500)
                     .execute()
                     .returnContent()
