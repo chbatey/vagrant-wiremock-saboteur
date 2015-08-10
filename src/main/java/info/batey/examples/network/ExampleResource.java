@@ -8,6 +8,7 @@ import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.datastax.driver.core.exceptions.ReadTimeoutException;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,19 +26,10 @@ public class ExampleResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExampleResource.class);
 
-    private final Session session;
     private final String dependencyHost;
 
     public ExampleResource(AppConfig config) {
         this.dependencyHost = String.format("http://%s:%d/name", config.getHost(), config.getHttpPort());
-        final SocketOptions options = new SocketOptions();
-        options.setReadTimeoutMillis(500);
-        this.session = Cluster.builder()
-                .addContactPoint(config.getHost())
-                .withPort(config.getCassandraPort())
-                .withSocketOptions(options)
-                .build()
-                .connect("keyspace");
     }
 
     @GET
@@ -51,23 +43,10 @@ public class ExampleResource {
                     .returnContent()
                     .asString();
 
-            Optional<Row> cassandraSurname = Optional.ofNullable(
-                    session.execute("select surname from users where name = ?", name).one());
-
-            String surname = cassandraSurname.map(row -> row.getString("surname")).orElseGet(() -> "Smith");
-
-            return Response.ok(String.format("hello %s %s\n\n", name, surname)).build();
+            return Response.ok(String.format("hello %s \n\n", name)).build();
         }
-        catch (SocketTimeoutException ste) {
+        catch (SocketTimeoutException | ConnectTimeoutException e) {
             LOGGER.warn("Blame the other team, their server is slow");
-            return Response.serverError().build();
-        }
-        catch (NoHostAvailableException nhe) {
-            LOGGER.warn("Cassandra be slow or down, bring in OPS!!! ");
-            return Response.serverError().build();
-        }
-        catch (ReadTimeoutException readTimeoutException) {
-            LOGGER.warn("Cassandra read timeout: I should probably consider retrying???");
             return Response.serverError().build();
         }
         catch (Exception e) {
