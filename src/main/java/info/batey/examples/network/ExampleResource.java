@@ -4,6 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.SocketOptions;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.exceptions.ReadTimeoutException;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +29,12 @@ public class ExampleResource {
 
     public ExampleResource(AppConfig config) {
         this.dependencyHost = String.format("http://%s:%d/name", config.getHost(), config.getHttpPort());
+        final SocketOptions options = new SocketOptions();
+        options.setReadTimeoutMillis(500);
         this.session = Cluster.builder()
                 .addContactPoint(config.getHost())
                 .withPort(config.getCassandraPort())
+                .withSocketOptions(options)
                 .build()
                 .connect("keyspace");
     }
@@ -50,7 +56,16 @@ public class ExampleResource {
             String surname = cassandraSurname.map(row -> row.getString("surname")).orElseGet(() -> "Smith");
 
             return Response.ok(String.format("hello %s %s\n\n", name, surname)).build();
-        } catch (Exception e) {
+        }
+        catch (NoHostAvailableException nhe) {
+            LOGGER.info("Darn blast, Cassandra be slow or down");
+            return Response.serverError().build();
+        }
+        catch (ReadTimeoutException readTimeoutException) {
+            LOGGER.info("Cassandra read timeout: I should probably consider retrying???");
+            return Response.serverError().build();
+        }
+        catch (Exception e) {
             LOGGER.info("Darn blast", e);
             return Response.serverError().build();
         }
