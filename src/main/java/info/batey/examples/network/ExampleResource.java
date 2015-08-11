@@ -30,12 +30,9 @@ public class ExampleResource {
 
     public ExampleResource(AppConfig config) {
         this.dependencyHost = String.format("http://%s:%d/name", config.getHost(), config.getHttpPort());
-        final SocketOptions options = new SocketOptions();
-        options.setReadTimeoutMillis(500);
         this.session = Cluster.builder()
                 .addContactPoint(config.getHost())
                 .withPort(config.getCassandraPort())
-                .withSocketOptions(options)
                 .build()
                 .connect("keyspace");
     }
@@ -60,14 +57,6 @@ public class ExampleResource {
         }
         catch (SocketTimeoutException ste) {
             LOGGER.warn("Blame the other team, their server is slow");
-            return Response.serverError().build();
-        }
-        catch (NoHostAvailableException nhe) {
-            LOGGER.warn("Cassandra be slow or down, bring in OPS!!! ");
-            return Response.serverError().build();
-        }
-        catch (ReadTimeoutException readTimeoutException) {
-            LOGGER.warn("Cassandra read timeout: I should probably consider retrying???");
             return Response.serverError().build();
         }
         catch (Exception e) {
